@@ -1,9 +1,8 @@
 package spectrumanalyzer.dengn.spectrumanalyzer.thread;
 
 import android.content.Context;
-import android.media.AudioRecord;
-
-import java.util.logging.Handler;
+import android.os.Handler;
+import android.os.Message;
 
 import spectrumanalyzer.dengn.spectrumanalyzer.fft.FFT;
 import spectrumanalyzer.dengn.spectrumanalyzer.spectrum.AudioRecorder;
@@ -25,12 +24,23 @@ public class AudioRecordThread extends Thread {
 
     private int index = 0;
 
+    /**
+     *
+     * @param context
+     * @param handler
+     * @param accuracy
+     */
     public AudioRecordThread(Context context, Handler handler, int accuracy) {
         mContext = context;
         mHandler = handler;
-
+        mAccuracy = accuracy;
     }
 
+    /**
+     *
+     * @param fft_samples
+     * @param buffer_samples
+     */
     private void getFreqByFFT(FFT fft_samples, short buffer_samples[]) {
 
 
@@ -59,21 +69,26 @@ public class AudioRecordThread extends Thread {
             fftRealArray[0] = 0;
             fft_samples.forward(fftRealArray);
 
-            float maxVal = 0; // index of the bin with highest value
-            int maxValIndex = 0; // index of the bin with highest value
-            for (int i = 0; i < fft_samples.specSize(); i++) {
-                if ((fft_samples.getBand(i)) > maxVal) {
-                    maxVal = fft_samples.getBand(i);
-                    maxValIndex = i;
-                }
 
+
+            //get spectrum amplitudes and frequencies -> X Y values
+            float[] amplitudes = new float[fft_samples.specSize()];
+            float[] frequencies = new float[fft_samples.specSize()];
+
+            for (int i = 0; i < fft_samples.specSize(); i++) {
+                amplitudes[i] = fft_samples.getBand(i);
+                frequencies[i] = Math.round((float) i
+                        * ((float) mAudioRecorder.sampleRate / (float) mAccuracy));
             }
 
+            mSpectrum.setAmplitudes(amplitudes);
+            mSpectrum.setFrequencies(frequencies);
 
-            int final_freq = Math.round((float) maxValIndex
-                    * ((float) mAudioRecorder.sampleRate / (float) mAccuracy));
-
-
+            //Send result back to main UI thread
+            Message msg = Message.obtain();
+            msg.what = 0;
+            msg.obj = mSpectrum;
+            mHandler.sendMessage(msg);
 
         }
 
@@ -87,6 +102,8 @@ public class AudioRecordThread extends Thread {
             mAudioRecorder.setAccuracy(mAccuracy);
             mAudioRecorder.startRecorder();
             short[] buffer = mAudioRecorder.getSamples();
+
+            mSpectrum.setSignalSamples(buffer);
 
             FFT fft = new FFT(mAccuracy, AudioRecorder.sampleRate);
             getFreqByFFT(fft, buffer);

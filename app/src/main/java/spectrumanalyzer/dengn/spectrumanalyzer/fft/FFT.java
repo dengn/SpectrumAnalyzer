@@ -53,9 +53,11 @@ public class FFT extends FourierTransform
      *          the sample rate of the audio you will be analyzing
      */
 
+    public static final int ACCURACY_LOWEST=256;
     public static final int ACCURACY_LOW=512;
     public static final int ACCURACY_MIDEUM=1024;
     public static final int ACCURACY_HIGH=2048;
+    public static final int ACCURACY_HIGHEST=4096;
 
     public FFT(int timeSize, float sampleRate)
     {
