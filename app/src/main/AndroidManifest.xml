@@ -11,6 +11,9 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <service
+            android:name="de.quist.app.errorreporter.ExceptionReportService"
+            android:process=":exceptionReporter"/>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
@@ -20,6 +23,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <!-- TODO -->
+        <meta-data
+            android:name="de.quist.app.errorreporter.targetUrl"
+            android:value="http://foo.bar/error.php" />
+
     </application>
 
 </manifest>

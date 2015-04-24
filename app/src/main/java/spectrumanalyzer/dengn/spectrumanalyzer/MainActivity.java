@@ -18,6 +18,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
+import de.quist.app.errorreporter.ExceptionReporter;
 import spectrumanalyzer.dengn.spectrumanalyzer.fft.FFT;
 import spectrumanalyzer.dengn.spectrumanalyzer.spectrum.Spectrum;
 import spectrumanalyzer.dengn.spectrumanalyzer.thread.AudioRecordThread;
@@ -69,6 +70,7 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ExceptionReporter reporter = ExceptionReporter.register(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -78,6 +80,8 @@ public class MainActivity extends ActionBarActivity {
 
         YAxis leftAxis = spectrumChart.getAxisLeft();
         leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
+        leftAxis.setAxisMaxValue(2000f);
+        leftAxis.setAxisMinValue(-2000f);
         leftAxis.setStartAtZero(false);
         spectrumChart.getAxisRight().setEnabled(false);
 

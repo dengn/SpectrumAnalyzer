@@ -27,4 +27,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.github.PhilJay:MPAndroidChart:v2.0.9'
+    compile files('libs/android-error-reporter.jar')
 }
