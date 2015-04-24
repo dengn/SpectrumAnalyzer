@@ -7,6 +7,7 @@ import android.os.Message;
 import spectrumanalyzer.dengn.spectrumanalyzer.fft.FFT;
 import spectrumanalyzer.dengn.spectrumanalyzer.spectrum.AudioRecorder;
 import spectrumanalyzer.dengn.spectrumanalyzer.spectrum.Spectrum;
+import spectrumanalyzer.dengn.spectrumanalyzer.utils.Constants;
 
 /**
  * Created by Administrator on 2015-4-22.
@@ -21,6 +22,7 @@ public class AudioRecordThread extends Thread {
     private Spectrum mSpectrum = new Spectrum();
 
     private int mAccuracy;
+
 
     private int index = 0;
 
@@ -73,13 +75,14 @@ public class AudioRecordThread extends Thread {
 
             //get spectrum amplitudes and frequencies -> X Y values
             float[] amplitudes = new float[fft_samples.specSize()];
-            float[] frequencies = new float[fft_samples.specSize()];
+            int[] frequencies = new int[fft_samples.specSize()];
 
             for (int i = 0; i < fft_samples.specSize(); i++) {
                 amplitudes[i] = fft_samples.getBand(i);
                 frequencies[i] = Math.round((float) i
                         * ((float) mAudioRecorder.sampleRate / (float) mAccuracy));
-            }
+
+             }
 
             mSpectrum.setAmplitudes(amplitudes);
             mSpectrum.setFrequencies(frequencies);
@@ -87,13 +90,30 @@ public class AudioRecordThread extends Thread {
             //Send result back to main UI thread
             Message msg = Message.obtain();
             msg.what = 0;
-            msg.obj = mSpectrum;
+            msg.obj = Constants.gson.toJson(mSpectrum);
             mHandler.sendMessage(msg);
 
         }
 
     }
 
+    public void stopThread(){
+        mAudioRecorder.stopRecorder();
+        thread_running = false;
+
+        if ((this != null)&&this.isAlive()&&!this.isInterrupted()) {
+            this.interrupt();
+        }
+    }
+
+    public void restartThread(){
+        mAudioRecorder.startRecorder();
+        thread_running = true;
+
+        if ((this!=null)&&!this.isAlive()&&this.isInterrupted()) {
+            this.start();
+        }
+    }
 
     @Override
     public void run() {

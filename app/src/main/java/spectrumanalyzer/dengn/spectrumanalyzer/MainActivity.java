@@ -4,14 +4,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
 
 import spectrumanalyzer.dengn.spectrumanalyzer.fft.FFT;
 import spectrumanalyzer.dengn.spectrumanalyzer.spectrum.Spectrum;
 import spectrumanalyzer.dengn.spectrumanalyzer.thread.AudioRecordThread;
+import spectrumanalyzer.dengn.spectrumanalyzer.utils.Constants;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -21,8 +24,10 @@ public class MainActivity extends ActionBarActivity {
     private SurfaceView mSpectrumView;
     private SurfaceHolder mSpectrumViewHolder;
 
+    private TextView mFreqView;
+
     //function objects
-    private Spectrum mSpectrum;
+    private Spectrum mSpectrum = new Spectrum();
 
     private AudioRecordThread mAudioRecordThread;
     private Handler mHandler = new Handler() {
@@ -30,7 +35,12 @@ public class MainActivity extends ActionBarActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    mSpectrum = (Spectrum) msg.obj;
+                    String spectrumJson = (String) msg.obj;
+                    if(Constants.DEBUG)
+                        Log.d(Constants.TAG, "spectrum json: "+spectrumJson);
+                    mSpectrum = Constants.gson.fromJson(spectrumJson, Spectrum.class);
+
+
                     break;
             }
         }
@@ -39,11 +49,13 @@ public class MainActivity extends ActionBarActivity {
     //Drawing objects
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mFreqView = (TextView) findViewById(R.id.freq);
+        mFreqView.setText("123456789");
 
         mSpectrumView = (SurfaceView) findViewById(R.id.spectrum);
         mSpectrumViewHolder = mSpectrumView.getHolder();
@@ -51,6 +63,29 @@ public class MainActivity extends ActionBarActivity {
         //Create and start AudioRecord Thread
         mAudioRecordThread = new AudioRecordThread(this, mHandler, FFT.ACCURACY_MIDEUM);
         mAudioRecordThread.start();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAudioRecordThread.restartThread();
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (Constants.DEBUG)
+            Log.d(Constants.TAG, "on Stop");
+        mAudioRecordThread.stopThread();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (Constants.DEBUG)
+            Log.d(Constants.TAG, "on Destroy");
+        mAudioRecordThread.stopThread();
     }
 
 

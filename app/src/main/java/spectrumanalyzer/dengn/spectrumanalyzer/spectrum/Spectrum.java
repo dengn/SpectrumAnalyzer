@@ -8,7 +8,7 @@ public class Spectrum{
 
     private short[] mSignalSamples;
     private float[] mAmplitudes;
-    private float[] mFrequencies;
+    private int[] mFrequencies;
 
 
 
@@ -17,7 +17,7 @@ public class Spectrum{
 
     }
 
-    public Spectrum(short[] signalSamples, float[] amplitudes, float[] frequencies) {
+    public Spectrum(short[] signalSamples, float[] amplitudes, int[] frequencies) {
         mSignalSamples = signalSamples;
         mAmplitudes = amplitudes;
         mFrequencies = frequencies;
@@ -39,12 +39,12 @@ public class Spectrum{
         mAmplitudes = amplitudes;
     }
 
-    public float[] getFrequencies(){
+    public int[] getFrequencies(){
         return mFrequencies;
     }
 
-    public void setFrequencies(float[] frequencies){
-        mFrequencies = mFrequencies;
+    public void setFrequencies(int[] frequencies){
+        mFrequencies = frequencies;
     }
 
 
