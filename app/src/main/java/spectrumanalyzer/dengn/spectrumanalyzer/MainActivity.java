@@ -15,6 +15,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import spectrumanalyzer.dengn.spectrumanalyzer.fft.FFT;
@@ -33,26 +34,37 @@ public class MainActivity extends ActionBarActivity {
     private Spectrum mSpectrum = new Spectrum();
 
     private AudioRecordThread mAudioRecordThread;
-    private Handler mHandler = new Handler() {
+
+
+    static class WeakHandler extends Handler{
+
+        WeakReference<MainActivity> mActivityReference;
+
+        public WeakHandler(MainActivity activity) {
+            mActivityReference= new WeakReference<MainActivity>(activity);
+        }
+
         @Override
         public void handleMessage(Message msg) {
+
+            MainActivity mainActivity = mActivityReference.get();
             switch (msg.what) {
                 case 0:
                     String spectrumJson = (String) msg.obj;
 //                    if(Constants.DEBUG)
 //                        Log.d(Constants.TAG, "spectrum json: "+spectrumJson);
-                    mSpectrum = Constants.gson.fromJson(spectrumJson, Spectrum.class);
-                    if(Constants.DEBUG)
-                        Log.d(Constants.TAG, "get spectrum data");
-                    setData(mSpectrum, spectrumChart);
-                    spectrumChart.invalidate();
+                    mainActivity.mSpectrum = Constants.gson.fromJson(spectrumJson, Spectrum.class);
+
+                    mainActivity.setSignalData(mainActivity.mSpectrum, mainActivity.spectrumChart);
+                    mainActivity.spectrumChart.invalidate();
 
                     break;
             }
         }
-    };
+    }
+    private WeakHandler mHandler = new WeakHandler(this);
 
-    //Drawing objects
+
 
 
     @Override
@@ -66,8 +78,6 @@ public class MainActivity extends ActionBarActivity {
 
         YAxis leftAxis = spectrumChart.getAxisLeft();
         leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
-        leftAxis.setAxisMaxValue(1f);
-        leftAxis.setAxisMinValue(-1f);
         leftAxis.setStartAtZero(false);
         spectrumChart.getAxisRight().setEnabled(false);
 
@@ -77,7 +87,54 @@ public class MainActivity extends ActionBarActivity {
         mAudioRecordThread.start();
     }
 
-    private void setData(Spectrum spectrum, LineChart chart) {
+
+    private void setSignalData(Spectrum spectrum, LineChart chart) {
+
+        short[] signalSamples = spectrum.getSignalSamples();
+
+        ArrayList<String> xVals = new ArrayList<String>();
+        for (int i = 0; i < signalSamples.length; i++) {
+            xVals.add("");
+        }
+
+        ArrayList<Entry> yVals = new ArrayList<Entry>();
+
+        for (int i = 0; i < signalSamples.length; i++) {
+
+            float val = signalSamples[i];
+            yVals.add(new Entry(val, i));
+        }
+
+        // create a dataset and give it a type
+        LineDataSet set1 = new LineDataSet(yVals, "Signal Samples");
+        // set1.setFillAlpha(110);
+        // set1.setFillColor(Color.RED);
+
+        // set the line to be drawn like this "- - - - - -"
+//        set1.enableDashedLine(10f, 5f, 0f);
+        set1.setColor(Color.BLACK);
+        set1.setCircleColor(Color.BLACK);
+//        set1.setLineWidth(1f);
+//        set1.setCircleSize(3f);
+//        set1.setDrawCircleHole(false);
+//        set1.setValueTextSize(9f);
+//        set1.setFillAlpha(65);
+        set1.setFillColor(Color.BLACK);
+//        set1.setDrawFilled(true);
+        // set1.setShader(new LinearGradient(0, 0, 0, mChart.getHeight(),
+        // Color.BLACK, Color.WHITE, Shader.TileMode.MIRROR));
+
+        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+        dataSets.add(set1); // add the datasets
+
+        // create a data object with the datasets
+        LineData data = new LineData(xVals, dataSets);
+
+        // set data
+        chart.setData(data);
+    }
+
+    private void setSpectrumData(Spectrum spectrum, LineChart chart) {
 
         int[] frequencies = spectrum.getFrequencies();
         float[] amplitudes = spectrum.getAmplitudes();
@@ -96,7 +153,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         // create a dataset and give it a type
-        LineDataSet set1 = new LineDataSet(yVals, "DataSet 1");
+        LineDataSet set1 = new LineDataSet(yVals, "Spectrum");
         // set1.setFillAlpha(110);
         // set1.setFillColor(Color.RED);
 

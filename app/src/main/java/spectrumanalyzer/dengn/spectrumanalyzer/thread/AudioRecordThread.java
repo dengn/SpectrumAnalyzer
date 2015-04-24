@@ -3,6 +3,7 @@ package spectrumanalyzer.dengn.spectrumanalyzer.thread;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import spectrumanalyzer.dengn.spectrumanalyzer.fft.FFT;
 import spectrumanalyzer.dengn.spectrumanalyzer.spectrum.AudioRecorder;
@@ -83,6 +84,8 @@ public class AudioRecordThread extends Thread {
                         * ((float) mAudioRecorder.sampleRate / (float) mAccuracy));
 
              }
+            if(Constants.DEBUG)
+                Log.d(Constants.TAG, "amplitudes size: "+String.valueOf(amplitudes.length));
 
             mSpectrum.setAmplitudes(amplitudes);
             mSpectrum.setFrequencies(frequencies);

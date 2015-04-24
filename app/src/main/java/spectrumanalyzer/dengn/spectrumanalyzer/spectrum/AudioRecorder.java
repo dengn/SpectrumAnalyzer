@@ -72,13 +72,5 @@ public class AudioRecorder {
         return bufferReadResult;
     }
 
-    public float[] getIntensity(short[] buffer_sample) {
-        float intensity[] = new float[accuracy];
-        for (int i = 0; i < accuracy; i++) {
-            intensity[i] = (float) buffer_sample[i];
-        }
 
-        return intensity;
-
-    }
 }
