@@ -1,5 +1,6 @@
 package spectrumanalyzer.dengn.spectrumanalyzer;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -7,9 +8,14 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.widget.TextView;
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+
+import java.util.ArrayList;
 
 import spectrumanalyzer.dengn.spectrumanalyzer.fft.FFT;
 import spectrumanalyzer.dengn.spectrumanalyzer.spectrum.Spectrum;
@@ -21,10 +27,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     //UI components objects
-    private SurfaceView mSpectrumView;
-    private SurfaceHolder mSpectrumViewHolder;
-
-    private TextView mFreqView;
+    private LineChart spectrumChart;
 
     //function objects
     private Spectrum mSpectrum = new Spectrum();
@@ -36,10 +39,13 @@ public class MainActivity extends ActionBarActivity {
             switch (msg.what) {
                 case 0:
                     String spectrumJson = (String) msg.obj;
-                    if(Constants.DEBUG)
-                        Log.d(Constants.TAG, "spectrum json: "+spectrumJson);
+//                    if(Constants.DEBUG)
+//                        Log.d(Constants.TAG, "spectrum json: "+spectrumJson);
                     mSpectrum = Constants.gson.fromJson(spectrumJson, Spectrum.class);
-
+                    if(Constants.DEBUG)
+                        Log.d(Constants.TAG, "get spectrum data");
+                    setData(mSpectrum, spectrumChart);
+                    spectrumChart.invalidate();
 
                     break;
             }
@@ -54,15 +60,68 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mFreqView = (TextView) findViewById(R.id.freq);
-        mFreqView.setText("123456789");
+        //Init Ui Components
+        spectrumChart = (LineChart) findViewById(R.id.spectrumChart);
+        spectrumChart.setDescription("");
 
-        mSpectrumView = (SurfaceView) findViewById(R.id.spectrum);
-        mSpectrumViewHolder = mSpectrumView.getHolder();
+        YAxis leftAxis = spectrumChart.getAxisLeft();
+        leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
+        leftAxis.setAxisMaxValue(1f);
+        leftAxis.setAxisMinValue(-1f);
+        leftAxis.setStartAtZero(false);
+        spectrumChart.getAxisRight().setEnabled(false);
+
 
         //Create and start AudioRecord Thread
-        mAudioRecordThread = new AudioRecordThread(this, mHandler, FFT.ACCURACY_MIDEUM);
+        mAudioRecordThread = new AudioRecordThread(this, mHandler, FFT.ACCURACY_LOWEST);
         mAudioRecordThread.start();
+    }
+
+    private void setData(Spectrum spectrum, LineChart chart) {
+
+        int[] frequencies = spectrum.getFrequencies();
+        float[] amplitudes = spectrum.getAmplitudes();
+
+        ArrayList<String> xVals = new ArrayList<String>();
+        for (int i = 0; i < frequencies.length; i++) {
+            xVals.add(String.valueOf(frequencies[i]) + "");
+        }
+
+        ArrayList<Entry> yVals = new ArrayList<Entry>();
+
+        for (int i = 0; i < amplitudes.length; i++) {
+
+            float val = amplitudes[i];
+            yVals.add(new Entry(val, i));
+        }
+
+        // create a dataset and give it a type
+        LineDataSet set1 = new LineDataSet(yVals, "DataSet 1");
+        // set1.setFillAlpha(110);
+        // set1.setFillColor(Color.RED);
+
+        // set the line to be drawn like this "- - - - - -"
+//        set1.enableDashedLine(10f, 5f, 0f);
+        set1.setColor(Color.BLACK);
+        set1.setCircleColor(Color.BLACK);
+//        set1.setLineWidth(1f);
+//        set1.setCircleSize(3f);
+//        set1.setDrawCircleHole(false);
+//        set1.setValueTextSize(9f);
+//        set1.setFillAlpha(65);
+        set1.setFillColor(Color.BLACK);
+//        set1.setDrawFilled(true);
+        // set1.setShader(new LinearGradient(0, 0, 0, mChart.getHeight(),
+        // Color.BLACK, Color.WHITE, Shader.TileMode.MIRROR));
+
+        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+        dataSets.add(set1); // add the datasets
+
+        // create a data object with the datasets
+        LineData data = new LineData(xVals, dataSets);
+
+        // set data
+        chart.setData(data);
     }
 
     @Override
