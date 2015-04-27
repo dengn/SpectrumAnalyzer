@@ -6,8 +6,8 @@ import android.os.Message;
 import android.util.Log;
 
 import spectrumanalyzer.dengn.spectrumanalyzer.fft.FFT;
-import spectrumanalyzer.dengn.spectrumanalyzer.spectrum.AudioRecorder;
-import spectrumanalyzer.dengn.spectrumanalyzer.spectrum.Spectrum;
+import spectrumanalyzer.dengn.spectrumanalyzer.models.AudioRecorder;
+import spectrumanalyzer.dengn.spectrumanalyzer.models.Spectrum;
 import spectrumanalyzer.dengn.spectrumanalyzer.utils.Constants;
 
 /**
@@ -53,6 +53,10 @@ public class AudioRecordThread extends Thread {
                     / Short.MAX_VALUE;// 32768.0;
         }
         index += mAudioRecorder.getBufferReadResult();
+
+        if((index>1024)||(index<0)){
+            index = 0;
+        }
         if (index == mAccuracy) {
             index = 0;
             // apply windowing

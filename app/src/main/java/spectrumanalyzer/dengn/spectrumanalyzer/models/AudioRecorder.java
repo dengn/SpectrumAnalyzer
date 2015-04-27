@@ -1,4 +1,4 @@
-package spectrumanalyzer.dengn.spectrumanalyzer.spectrum;
+package spectrumanalyzer.dengn.spectrumanalyzer.models;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;

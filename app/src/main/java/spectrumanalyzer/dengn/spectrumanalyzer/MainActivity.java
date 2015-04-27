@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 import de.quist.app.errorreporter.ExceptionReporter;
 import spectrumanalyzer.dengn.spectrumanalyzer.fft.FFT;
-import spectrumanalyzer.dengn.spectrumanalyzer.spectrum.Spectrum;
+import spectrumanalyzer.dengn.spectrumanalyzer.models.Spectrum;
 import spectrumanalyzer.dengn.spectrumanalyzer.thread.AudioRecordThread;
 import spectrumanalyzer.dengn.spectrumanalyzer.utils.Constants;
 
@@ -29,6 +29,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     //UI components objects
+    private LineChart signalChart;
     private LineChart spectrumChart;
 
     //function objects
@@ -55,9 +56,12 @@ public class MainActivity extends ActionBarActivity {
 //                    if(Constants.DEBUG)
 //                        Log.d(Constants.TAG, "spectrum json: "+spectrumJson);
                     mainActivity.mSpectrum = Constants.gson.fromJson(spectrumJson, Spectrum.class);
+                    mainActivity.setSignalData(mainActivity.mSpectrum, mainActivity.signalChart);
+                    mainActivity.setSpectrumData(mainActivity.mSpectrum, mainActivity.spectrumChart);
 
-                    mainActivity.setSignalData(mainActivity.mSpectrum, mainActivity.spectrumChart);
+                    mainActivity.signalChart.invalidate();
                     mainActivity.spectrumChart.invalidate();
+
 
                     break;
             }
@@ -75,14 +79,24 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         //Init Ui Components
+        signalChart = (LineChart) findViewById(R.id.signalChart);
+        signalChart.setDescription("");
+
         spectrumChart = (LineChart) findViewById(R.id.spectrumChart);
         spectrumChart.setDescription("");
 
-        YAxis leftAxis = spectrumChart.getAxisLeft();
-        leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
-        leftAxis.setAxisMaxValue(2000f);
-        leftAxis.setAxisMinValue(-2000f);
-        leftAxis.setStartAtZero(false);
+        YAxis leftAxisSignal = signalChart.getAxisLeft();
+        leftAxisSignal.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
+        leftAxisSignal.setAxisMaxValue(2000f);
+        leftAxisSignal.setAxisMinValue(-2000f);
+        leftAxisSignal.setStartAtZero(false);
+        signalChart.getAxisRight().setEnabled(false);
+
+        YAxis leftAxisSpectrum = spectrumChart.getAxisLeft();
+        leftAxisSpectrum.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
+        leftAxisSpectrum.setAxisMaxValue(1f);
+        leftAxisSpectrum.setAxisMinValue(-1f);
+        leftAxisSpectrum.setStartAtZero(false);
         spectrumChart.getAxisRight().setEnabled(false);
 
 
