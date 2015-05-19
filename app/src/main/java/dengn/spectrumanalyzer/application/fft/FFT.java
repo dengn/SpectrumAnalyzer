@@ -22,7 +22,7 @@
  *  12 may 2013
  *
  */
-package spectrumanalyzer.dengn.spectrumanalyzer.fft;
+package dengn.spectrumanalyzer.application.fft;
 
 /**
  * FFT stands for Fast Fourier Transform. It is an efficient way to calculate the Complex

@@ -1,4 +1,4 @@
-package spectrumanalyzer.dengn.spectrumanalyzer.models;
+package dengn.spectrumanalyzer.application.models;
 
 /**
  * Created by Administrator on 2015-4-22.

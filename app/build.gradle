@@ -26,7 +26,8 @@ repositories {
 dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.google.code.gson:gson:2.3.1'
-    compile 'com.github.PhilJay:MPAndroidChart:v2.0.9'
-    compile files('libs/android-error-reporter.jar')
-    compile files('libs/acra-4.6.1.jar')
+    compile files('libs/volley.jar')
+    compile files('libs/weatherlib_1.4.0.jar')
+    compile files('libs/weatherlib_volleyclient_1.4.0.jar')
+    compile files('libs/achartengine-1.1.0.jar')
 }

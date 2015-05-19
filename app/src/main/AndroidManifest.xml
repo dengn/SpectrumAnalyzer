@@ -5,18 +5,16 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:name="MyApplication"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <service
-            android:name="de.quist.app.errorreporter.ExceptionReportService"
-            android:process=":exceptionReporter"/>
+
         <activity
-            android:name=".MainActivity"
+            android:name="dengn.spectrumanalyzer.application.ui.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,10 +24,6 @@
         </activity>
 
 
-        <!-- TODO -->
-        <meta-data
-            android:name="de.quist.app.errorreporter.targetUrl"
-            android:value="http://54.69.185.28/spectrum/error.php" />
 
     </application>
 

@@ -1,4 +1,4 @@
-package spectrumanalyzer.dengn.spectrumanalyzer.models;
+package dengn.spectrumanalyzer.application.models;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -49,9 +49,10 @@ public class AudioRecorder {
 
     public void stopRecorder() {
         try {
-            audioRecorder.release();
-            //Without release, resuming after the stop would not be normal
+
             audioRecorder.stop();
+            audioRecorder.release();
+
         } catch (IllegalStateException e) {
             Log.e("Stop failed", e.toString());
         }

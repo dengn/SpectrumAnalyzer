@@ -139,7 +139,7 @@
  * @author Damien Di Fede
  * @see <a href="http://www.dspguide.com/ch8.htm">The Discrete Fourier Transform</a>
  */
-package spectrumanalyzer.dengn.spectrumanalyzer.fft;
+package dengn.spectrumanalyzer.application.fft;
 
 public abstract class FourierTransform
 {

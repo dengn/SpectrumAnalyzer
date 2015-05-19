@@ -1,4 +1,4 @@
-package spectrumanalyzer.dengn.spectrumanalyzer.utils;
+package dengn.spectrumanalyzer.application.utils;
 
 import com.google.gson.Gson;
 
