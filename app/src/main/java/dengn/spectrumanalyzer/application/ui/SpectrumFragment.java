@@ -40,7 +40,11 @@ public class SpectrumFragment extends Fragment implements FragmentCommunicator {
     private LinearLayout chartSignal;
     private LinearLayout chartSpectrum;
 
+    private GraphicalView chart;
 
+
+    XYMultipleSeriesDataset dataset1;
+    XYSeries series1;
 
     //
     private Context context;
@@ -80,8 +84,12 @@ public class SpectrumFragment extends Fragment implements FragmentCommunicator {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_spectrum, container, false);
         chartSpectrum = (LinearLayout) v.findViewById(R.id.chart_spectrum);
+
+
         if(spectrum!=null) {
-            chartSpectrum.addView(createSpectrumGraph());
+            //生成图表
+            chart = ChartFactory.getLineChartView(context, getDateDemoDataset(), getDemoRenderer());
+            chartSpectrum.addView(chart);
         }
         return v;
 
@@ -98,14 +106,85 @@ public class SpectrumFragment extends Fragment implements FragmentCommunicator {
     //FragmentCommunicator interface implementation
     @Override
     public void passDataToFragment(String spectrumString){
+
         spectrum = Constants.gson.fromJson(spectrumString, Spectrum.class);
         if(spectrum!=null) {
-            chartSpectrum.removeAllViews();
-            chartSpectrum.addView(createSpectrumGraph());
+            updateChart();
         }
     }
 
+    private void updateChart() {
 
+        if(chart==null){
+            chart = ChartFactory.getLineChartView(context, getDateDemoDataset(), getDemoRenderer());
+            chartSpectrum.addView(chart);
+        }
+
+
+        series1.clear();
+        //将新产生的点首先加入到点集中，然后在循环体中将坐标变换后的一系列点都重新加入到点集中
+        //这里可以试验一下把顺序颠倒过来是什么效果，即先运行循环体，再添加新产生的点
+        for(int i=0;i<spectrum.getFrequencies().length;i++){
+            series1.add((double)spectrum.getFrequencies()[i], Math.log((double)spectrum.getAmplitudes()[i]));
+        }
+        //在数据集中添加新的点集
+        dataset1.removeSeries(series1);
+        dataset1.addSeries(series1);
+        //曲线更新
+        chart.repaint();
+    }
+
+
+    /**
+     * 数据对象
+     * @return
+     */
+    private XYMultipleSeriesDataset getDateDemoDataset() {
+        dataset1 = new XYMultipleSeriesDataset();
+        series1 = new XYSeries("Spectrum");
+
+        for(int i=0;i<spectrum.getFrequencies().length;i++){
+            series1.add((double) spectrum.getFrequencies()[i], Math.log((double) spectrum.getAmplitudes()[i]));
+
+        }
+        dataset1.addSeries(series1);
+
+        return dataset1;
+    }
+
+    /**
+     * 设定如表样式
+     * @return
+     */
+    private XYMultipleSeriesRenderer getDemoRenderer() {
+
+
+
+        // Now we create the renderer
+        XYSeriesRenderer r = new XYSeriesRenderer();
+        r.setLineWidth(2);
+        r.setColor(Color.RED);
+        // Include low and max value
+        r.setDisplayBoundingPoints(true);
+        //renderer.setDisplayChartValues(true);
+        // we add point markers
+        r.setPointStyle(PointStyle.CIRCLE);
+        r.setPointStrokeWidth(3);
+
+        XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
+        renderer.addSeriesRenderer(r);
+
+        // We want to avoid black border
+        renderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
+        // Disable Pan on two axis
+        renderer.setPanEnabled(false, false);
+        renderer.setYAxisMax(60);
+        renderer.setYAxisMin(-20);
+        renderer.setShowGrid(true); // we show the grid
+
+
+        return renderer;
+    }
 
     private View createSpectrumGraph() {
         // We start creating the XYSeries to plot the temperature
@@ -182,8 +261,8 @@ public class SpectrumFragment extends Fragment implements FragmentCommunicator {
         mRenderer.setMarginsColor(Color.argb(0x00, 0xff, 0x00, 0x00)); // transparent margins
         // Disable Pan on two axis
         mRenderer.setPanEnabled(false, false);
-        mRenderer.setYAxisMax(35);
-        mRenderer.setYAxisMin(0);
+        mRenderer.setYAxisMax(32768);
+        mRenderer.setYAxisMin(-32768);
         mRenderer.setShowGrid(true); // we show the grid
         GraphicalView chartView = ChartFactory.getLineChartView(getActivity(), dataset, mRenderer);
 
