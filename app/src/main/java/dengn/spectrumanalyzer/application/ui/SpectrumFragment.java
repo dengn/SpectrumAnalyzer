@@ -42,6 +42,8 @@ public class SpectrumFragment extends Fragment implements FragmentCommunicator {
 
     private GraphicalView chart;
 
+    private plot2d plot;
+
 
     XYMultipleSeriesDataset dataset1;
     XYSeries series1;
@@ -86,10 +88,30 @@ public class SpectrumFragment extends Fragment implements FragmentCommunicator {
         chartSpectrum = (LinearLayout) v.findViewById(R.id.chart_spectrum);
 
 
+
+//        if(spectrum!=null) {
+//            //生成图表
+//            chart = ChartFactory.getLineChartView(context, getDateDemoDataset(), getDemoRenderer());
+//            chartSpectrum.addView(chart);
+//        }
         if(spectrum!=null) {
-            //生成图表
-            chart = ChartFactory.getLineChartView(context, getDateDemoDataset(), getDemoRenderer());
-            chartSpectrum.addView(chart);
+
+            float[] xvalues = new float[spectrum.getFrequencies().length];
+            float[] yvalues = new float[spectrum.getFrequencies().length];
+            for (int i = 0; i < spectrum.getFrequencies().length; i++) {
+
+                xvalues[i] = (float) spectrum.getFrequencies()[i];
+                yvalues[i] = (float) spectrum.getAmplitudes()[i];
+            }
+
+            plot = new plot2d(context, xvalues, yvalues, 1);
+//            plotDynamic plot = new plotDynamic(context);
+//            for(int i=0;i<spectrum.getFrequencies().length;i++){
+//                plot.addData(spectrum.getAmplitudes()[i]);
+//
+//            }
+
+            chartSpectrum.addView(plot);
         }
         return v;
 
@@ -109,8 +131,30 @@ public class SpectrumFragment extends Fragment implements FragmentCommunicator {
 
         spectrum = Constants.gson.fromJson(spectrumString, Spectrum.class);
         if(spectrum!=null) {
-            updateChart();
+            updatePlot();
         }
+    }
+
+    private void updatePlot(){
+
+        float[] xvalues = new float[spectrum.getFrequencies().length];
+        float[] yvalues = new float[spectrum.getFrequencies().length];
+        for (int i = 0; i < spectrum.getFrequencies().length; i++) {
+
+            xvalues[i] = (float) spectrum.getFrequencies()[i];
+            yvalues[i] = (float) spectrum.getAmplitudes()[i];
+        }
+
+
+        plot = new plot2d(context, xvalues, yvalues, 1);
+        chartSpectrum.addView(plot);
+
+
+
+
+
+        plot.invalidate();
+
     }
 
     private void updateChart() {

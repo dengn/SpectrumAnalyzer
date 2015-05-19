@@ -54,9 +54,9 @@ public class MainActivity extends ActionBarActivity {
 
                     //Avoid activity quits but fragment still waiting for transaction
                     if(!mainActivity.isFinishing()) {
-//                        SpectrumFragment spectrumFragment = SpectrumFragment.newInstance(spectrumJson);
-//                        mainActivity.getFragmentManager().beginTransaction().replace(R.id.container, spectrumFragment).commit();
-                        mainActivity.fragmentCommunicator.passDataToFragment(spectrumJson);
+                        SpectrumFragment spectrumFragment = SpectrumFragment.newInstance(spectrumJson);
+                        mainActivity.getFragmentManager().beginTransaction().replace(R.id.container, spectrumFragment).commit();
+                        //mainActivity.fragmentCommunicator.passDataToFragment(spectrumJson);
                     }
 
                     long time2 = SystemClock.elapsedRealtimeNanos();
@@ -86,7 +86,7 @@ public class MainActivity extends ActionBarActivity {
 
 
         //Create and start AudioRecord Thread
-        mAudioRecordThread = new AudioRecordThread(this, mHandler, FFT.ACCURACY_LOWEST);
+        mAudioRecordThread = new AudioRecordThread(this, mHandler, FFT.ACCURACY_MIDEUM);
         mAudioRecordThread.start();
     }
 

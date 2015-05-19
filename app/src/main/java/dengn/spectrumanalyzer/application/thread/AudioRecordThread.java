@@ -53,10 +53,10 @@ public class AudioRecordThread extends Thread {
         }
         index += mAudioRecorder.getBufferReadResult();
 
-        if((index>1024)||(index<0)){
-            index = 0;
-        }
-        if (index == mAccuracy) {
+//        if((index>mAccuracy)||(index<0)){
+//            index = 0;
+//        }
+        if (index >= mAccuracy) {
             index = 0;
             // apply windowing
             for (int i = 0; i < mAccuracy / 2; ++i) {

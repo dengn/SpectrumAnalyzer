@@ -69,7 +69,7 @@ public class AudioRecorder {
 
     }
 
-    public int getBufferReadResult(){
+    public int getBufferReadResult() {
         return bufferReadResult;
     }
 
