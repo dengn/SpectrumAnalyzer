@@ -3,20 +3,26 @@ package dengn.spectrumanalyzer.application.ui;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.lang.ref.WeakReference;
 
 import dengn.spectrumanalyzer.application.fft.FFT;
+import dengn.spectrumanalyzer.application.interfaces.FragmentCommunicator;
 import dengn.spectrumanalyzer.application.models.Spectrum;
 import dengn.spectrumanalyzer.application.thread.AudioRecordThread;
+import dengn.spectrumanalyzer.application.utils.Constants;
 import spectrumanalyzer.dengn.spectrumanalyzer.R;
 
 
 public class MainActivity extends ActionBarActivity {
 
+    //Interface
+    public FragmentCommunicator fragmentCommunicator;
 
     //UI components objects
 
@@ -43,12 +49,19 @@ public class MainActivity extends ActionBarActivity {
                 case 0:
                     String spectrumJson = (String) msg.obj;
 
+                    long time1 = SystemClock.elapsedRealtimeNanos();
+
 
                     //Avoid activity quits but fragment still waiting for transaction
                     if(!mainActivity.isFinishing()) {
-                        SpectrumFragment spectrumFragment = SpectrumFragment.newInstance(spectrumJson);
-                        mainActivity.getFragmentManager().beginTransaction().replace(R.id.container, spectrumFragment).commit();
+//                        SpectrumFragment spectrumFragment = SpectrumFragment.newInstance(spectrumJson);
+//                        mainActivity.getFragmentManager().beginTransaction().replace(R.id.container, spectrumFragment).commit();
+                        mainActivity.fragmentCommunicator.passDataToFragment(spectrumJson);
                     }
+
+                    long time2 = SystemClock.elapsedRealtimeNanos();
+                    if(Constants.DEBUG)
+                        Log.d(Constants.TAG, "refreshing time: "+String.valueOf(time2-time1));
 
                     break;
             }
@@ -91,6 +104,7 @@ public class MainActivity extends ActionBarActivity {
         super.onStop();
         mAudioRecordThread.stopThread();
     }
+
 
 
 

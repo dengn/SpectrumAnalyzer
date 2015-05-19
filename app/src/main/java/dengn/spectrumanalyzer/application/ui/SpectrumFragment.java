@@ -1,7 +1,9 @@
 package dengn.spectrumanalyzer.application.ui;
 
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,16 +19,17 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
-import spectrumanalyzer.dengn.spectrumanalyzer.R;
+import dengn.spectrumanalyzer.application.interfaces.FragmentCommunicator;
 import dengn.spectrumanalyzer.application.models.Spectrum;
 import dengn.spectrumanalyzer.application.utils.Constants;
+import spectrumanalyzer.dengn.spectrumanalyzer.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link SpectrumFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SpectrumFragment extends Fragment {
+public class SpectrumFragment extends Fragment implements FragmentCommunicator {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String SPECTRUM_STRING = "spectrum";
@@ -36,6 +39,11 @@ public class SpectrumFragment extends Fragment {
     //UI
     private LinearLayout chartSignal;
     private LinearLayout chartSpectrum;
+
+
+
+    //
+    private Context context;
 
     /**
      * Use this factory method to create a new instance of
@@ -79,6 +87,26 @@ public class SpectrumFragment extends Fragment {
 
     }
 
+    //Since Fragment is Activity dependent you need Activity context in various cases
+    @Override
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+        context = getActivity();
+        ((MainActivity)context).fragmentCommunicator = this;
+    }
+
+    //FragmentCommunicator interface implementation
+    @Override
+    public void passDataToFragment(String spectrumString){
+        spectrum = Constants.gson.fromJson(spectrumString, Spectrum.class);
+        if(spectrum!=null) {
+            chartSpectrum.removeAllViews();
+            chartSpectrum.addView(createSpectrumGraph());
+        }
+    }
+
+
+
     private View createSpectrumGraph() {
         // We start creating the XYSeries to plot the temperature
         XYSeries series = new XYSeries("Spectrum");
@@ -121,6 +149,7 @@ public class SpectrumFragment extends Fragment {
     }
 
 
+
     private View createSignalGraph() {
         // We start creating the XYSeries to plot the temperature
         XYSeries series = new XYSeries("Signal");
@@ -160,4 +189,5 @@ public class SpectrumFragment extends Fragment {
 
         return chartView;
     }
+
 }
