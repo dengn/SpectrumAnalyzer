@@ -47,15 +47,14 @@ public class AudioRecordThread extends Thread {
 
 
         float fftRealArray[] = new float[mAccuracy];
+
         for (int i = index; i < mAudioRecorder.getBufferReadResult() + index; i++) {
-            fftRealArray[i] = (float) buffer_samples[i - index]
-                    / Short.MAX_VALUE;// 32768.0;
+                fftRealArray[i-index] = (float) buffer_samples[i - index]
+                        / Short.MAX_VALUE;// 32768.0;
         }
         index += mAudioRecorder.getBufferReadResult();
 
-//        if((index>mAccuracy)||(index<0)){
-//            index = 0;
-//        }
+
         if (index >= mAccuracy) {
             index = 0;
             // apply windowing
