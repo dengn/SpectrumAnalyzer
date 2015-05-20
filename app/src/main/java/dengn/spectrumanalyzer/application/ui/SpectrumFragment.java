@@ -101,7 +101,7 @@ public class SpectrumFragment extends Fragment implements FragmentCommunicator {
             for (int i = 0; i < spectrum.getFrequencies().length; i++) {
 
                 xvalues[i] = (float) spectrum.getFrequencies()[i];
-                yvalues[i] = (float) spectrum.getAmplitudes()[i];
+                yvalues[i] = (float) Math.log(spectrum.getAmplitudes()[i]);
             }
 
             plot = new plot2d(context, xvalues, yvalues, 1);

@@ -1,0 +1,33 @@
+Applications Memory Usage (kB):
+Uptime: 683829985 Realtime: 683829981
+
+** MEMINFO in pid 27980 [spectrumanalyzer.dengn.spectrumanalyzer] **
+                         Shared  Private     Heap     Heap     Heap
+                   Pss    Dirty    Dirty     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------
+       Native      420     2396      352    22168     3613      642
+       Dalvik     4416     8400     4164     8700     4434     4266
+       Cursor        0        0        0                           
+       Ashmem        0        0        0                           
+    Other dev    14483      532     1352                           
+     .so mmap     1912    16212      944                           
+    .jar mmap        0        0        0                           
+    .apk mmap      121        0        0                           
+    .ttf mmap       22        0        0                           
+    .dex mmap     1252        0       12                           
+   Other mmap     4359       24     3092                           
+      Unknown     2183      428     2172                           
+        TOTAL    29168    27992    12088    30868     8047     4908
+ 
+ Objects
+               Views:       17         ViewRootImpl:        1
+         AppContexts:        3           Activities:        1
+              Assets:        2        AssetManagers:        2
+       Local Binders:        8        Proxy Binders:       11
+    Death Recipients:        0
+     OpenSSL Sockets:        0
+ 
+ SQL
+         MEMORY_USED:        0
+  PAGECACHE_OVERFLOW:        0          MALLOC_SIZE:        0
+ 

@@ -49,6 +49,9 @@ public class MainActivity extends ActionBarActivity {
                 case 0:
                     String spectrumJson = (String) msg.obj;
 
+                    if(Constants.DEBUG)
+                        Log.d(Constants.TAG, "spectrum json size: "+String.valueOf(spectrumJson.length()));
+
                     long time1 = SystemClock.elapsedRealtimeNanos();
 
 
