@@ -89,7 +89,7 @@ public class MainActivity extends ActionBarActivity {
 
 
         //Create and start AudioRecord Thread
-        mAudioRecordThread = new AudioRecordThread(this, mHandler, FFT.ACCURACY_HIGH);
+        mAudioRecordThread = new AudioRecordThread(this, mHandler, FFT.ACCURACY_MIDEUM);
         mAudioRecordThread.start();
     }
 

@@ -35,7 +35,7 @@ public class AudioRecorder {
         //Normally the returned bufferSize with this config is 4096.
         //Note that it doesn't have anything to do with the accuracy we put.
         audioRecorder = new AudioRecord(MediaRecorder.AudioSource.DEFAULT,
-                sampleRate, channelConfig, audioFormat, bufferSize*5);
+                sampleRate, channelConfig, audioFormat, bufferSize*10);
 
     }
 

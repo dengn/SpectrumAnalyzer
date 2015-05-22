@@ -7,7 +7,7 @@ import com.google.gson.Gson;
  */
 public class Constants {
     //switch for the whole application debug
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     public static final String TAG = "SpectrumAnalyzer";
 

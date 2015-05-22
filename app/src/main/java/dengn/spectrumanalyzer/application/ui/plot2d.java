@@ -48,7 +48,7 @@ public class plot2d extends View {
 		}
 		
 		paint.setColor(Color.BLACK);
-		canvas.drawLine(0,canvasHeight-locxAxisInPixels,canvasWidth,canvasHeight-locxAxisInPixels,paint);
+		canvas.drawLine(0,locxAxisInPixels,canvasWidth,locxAxisInPixels,paint);
 		canvas.drawLine(locyAxisInPixels,0,locyAxisInPixels,canvasHeight,paint);
 		
 		//Automatic axes markings, modify n to control the number of axes labels
@@ -59,12 +59,12 @@ public class plot2d extends View {
 			paint.setTextSize(20.0f);
 			for (int i=1;i<=n;i++){
 				temp = Math.round(10 * (minx + (i - 1) * (maxx - minx) / n))/10;
-				canvas.drawText(""+temp+"Hz", (float)toPixelInt(canvasWidth, minx, maxx, temp),canvasHeight-locxAxisInPixels+20, paint);
+				canvas.drawText(""+temp+"Hz", (float)toPixelInt(canvasWidth, minx, maxx, temp),locxAxisInPixels+20, paint);
 				temp = Math.round(10 * (miny + (i - 1) * (maxy - miny) / n))/10;
-				canvas.drawText(""+temp+"dB", locyAxisInPixels+20,canvasHeight-(float)toPixelInt(canvasHeight, miny, maxy, temp), paint);
+				//canvas.drawText(""+temp+"dB", locyAxisInPixels+20,canvasHeight-(float)toPixelInt(canvasHeight, miny, maxy, temp), paint);
 			}
-			canvas.drawText(""+maxx+"Hz", (float)toPixelInt(canvasWidth, minx, maxx, maxx),canvasHeight-locxAxisInPixels+20, paint);
-			canvas.drawText(""+maxy+"dB", locyAxisInPixels+20,canvasHeight-(float)toPixelInt(canvasHeight, miny, maxy, maxy), paint);
+			canvas.drawText(""+maxx+"Hz", (float)toPixelInt(canvasWidth, minx, maxx, maxx),locxAxisInPixels+20, paint);
+			//canvas.drawText(""+maxy+"dB", locyAxisInPixels+20,canvasHeight-(float)toPixelInt(canvasHeight, miny, maxy, maxy), paint);
 			//canvas.drawText(xAxis, canvasWidth/2,canvasHeight-locxAxisInPixels+45, paint);
 			//canvas.drawText(yAxis, locyAxisInPixels-40,canvasHeight/2, paint);
 		}
@@ -88,11 +88,11 @@ public class plot2d extends View {
 	private void getAxes(float[] xvalues, float[] yvalues) {
 		
 		minx=getMin(xvalues);
-		//miny=getMin(yvalues);
-		miny=getMinYAxis();
+		miny=getMin(yvalues);
+		//miny=getMinYAxis();
 		maxx=getMax(xvalues);
-		//maxy=getMax(yvalues);
-		maxy=getMaxYAxis();
+		maxy=getMax(yvalues);
+		//maxy=getMaxYAxis();
 		
 		if (minx>=0)
 			locyAxis=minx;

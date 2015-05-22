@@ -3,6 +3,7 @@ package dengn.spectrumanalyzer.application.thread;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import dengn.spectrumanalyzer.application.fft.FFT;
 import dengn.spectrumanalyzer.application.models.AudioRecorder;
@@ -80,12 +81,25 @@ public class AudioRecordThread extends Thread {
             float[] amplitudes = new float[fft_samples.specSize()];
             int[] frequencies = new int[fft_samples.specSize()];
 
+            float maxVal = 0; // index of the bin with highest value
+            int maxValIndex = 0; // index of the bin with highest value
+
             for (int i = 0; i < fft_samples.specSize(); i++) {
                 amplitudes[i] = fft_samples.getBand(i);
                 frequencies[i] = Math.round((float) i
                         * ((float) mAudioRecorder.sampleRate / (float) mAccuracy));
 
+                if ((fft_samples.getBand(i)) > maxVal) {
+                    maxVal = fft_samples.getBand(i);
+                    maxValIndex = i;
+                }
+
              }
+            int peakFreq = Math.round((float) maxValIndex
+                    * ((float) AudioRecorder.sampleRate / (float) mAccuracy));
+
+            if(Constants.DEBUG)
+                Log.d(Constants.TAG, "peak Freq: "+String.valueOf(peakFreq) );
 
             mSpectrum.setAmplitudes(amplitudes);
             mSpectrum.setFrequencies(frequencies);
